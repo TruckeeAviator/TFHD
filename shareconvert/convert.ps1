@@ -20,4 +20,5 @@ Remove-ItemProperty -Path $RegPath -Name "ForceAutoLogon"
 "Share to Uni convert" |Out-File C:\Build\Build.txt -Append
 ("Configured by " + $Credentials.UserName + " on: " + (Get-Date).ToString()) | Out-File C:\Build\Build.txt -Append
 
+Start-Sleep -s 5
 restart-computer
