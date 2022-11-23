@@ -3,6 +3,7 @@ $Credentials = Get-Credential
 
 #Set vars
 $shareduser=$env:COMPUTERNAME
+$regprofile="HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
 
 # Retrieve DN of local computer.
 $SysInfo = New-Object -ComObject "ADSystemInfo"
@@ -18,14 +19,22 @@ Remove-ItemProperty -Path $RegPath -Name "DefaultPassword"
 Remove-ItemProperty -Path $RegPath -Name "ForceAutoLogon"
 
 #Remove user from AD
-#Remove-ADUser -Identity $shareduser
+Remove-ADUser -Identity $shareduser
 
 #Delete AD memberships
 Remove-ADGroupMember -Identity "Shared" -Members $ComputerDN
 Remove-ADGroupMember -Identity "App-Imprivata Shared (Logout)" -Members $ComputerDN
 
 #Remove Shared version of Imprivada
-Start-Process -FilePath “MsiExec.exe" -ArgumentList "/X{562B7F33-EA0E-4C2E-A270-23CAA72C1480} /qn"
+#Start-Process -FilePath “MsiExec.exe" -ArgumentList "/X{562B7F33-EA0E-4C2E-A270-23CAA72C1480} /qn"
+
+#Delete local shared user account
+Remove-Item -LiteralPath "C:\Users\$shareduser" -Force -Recurse
+
+
+
+#Reinstall imprivada as unique
+#msiexec /i “ImprivataAgent_x64.msi" IPTXPRIMSERVER="HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter" AGENTTYPE=1 /qn /norestart
 
 #Add new AD memberships
 $App = @(
@@ -118,5 +127,5 @@ Start-Job -Credential $Credentials -ArgumentList $App -ScriptBlock {
 "Share to Uni convert" |Out-File C:\Build\Build.txt -Append
 ("Configured by " + $Credentials.UserName + " on: " + (Get-Date).ToString()) | Out-File C:\Build\Build.txt -Append
 
-Start-Sleep -s 5
+Start-Sleep -s 10
 restart-computer
