@@ -21,6 +21,11 @@ Remove-ItemProperty -Path $RegPath -Name "ForceAutoLogon"
 #Remove-ADUser -Identity $shareduser
 
 #Delete AD memberships
+Remove-ADGroupMember -Identity "Shared" -Members $ComputerDN
+Remove-ADGroupMember -Identity "App-Imprivata Shared (Logout)" -Members $ComputerDN
+
+#Remove Shared version of Imprivada
+Start-Process -FilePath “MsiExec.exe" -ArgumentList "/X{562B7F33-EA0E-4C2E-A270-23CAA72C1480} /qn"
 
 #Add new AD memberships
 $App = @(
