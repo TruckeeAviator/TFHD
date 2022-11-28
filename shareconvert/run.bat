@@ -9,4 +9,4 @@ cd "C:\sharedconvert"
 msiexec.exe /i “ImprivataAgent_x64.msi" IPTXPRIMSERVER="HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter" AGENTTYPE=1 /qn /norestart
 echo **Wait for ImprivataAgent to install**
 timeout /t 120
-start /D C:\ powershell -ExecutionPolicy Bypass C:\sharedconvert\shareconvert.ps1
+start /D C:\ powershell -ExecutionPolicy Bypass C:\sharedconvert\convert.ps1
