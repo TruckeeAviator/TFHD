@@ -1,6 +1,9 @@
 #Who is doing this?
 $Credentials = Get-Credential
 
+#Set Pre requirments
+Add-WindowsCapability -Online -Name "RSAT: Active Directory Domain Services and Lightweight Directory Services Tools"
+
 #Set vars
 $shareduser=$env:COMPUTERNAME
 $regprofile="HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
