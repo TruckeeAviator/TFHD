@@ -8,13 +8,11 @@ Add-WindowsCapability -Online -Name "Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.
 #Set vars
 $shareduser=$env:COMPUTERNAME
 $regprofile="HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
+$RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 
 # Retrieve DN of local computer.
 $SysInfo = New-Object -ComObject "ADSystemInfo"
 $ComputerDN = $SysInfo.GetType().InvokeMember("ComputerName", "GetProperty", $Null, $SysInfo, $Null)
-
-#Set Regedit path
-$RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 
 #Delete shared keys for autologin
 Remove-ItemProperty -Path $RegPath -Name "AutoAdminLogon"
