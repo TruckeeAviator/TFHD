@@ -121,7 +121,7 @@ Start-Job -Credential $Credentials -ArgumentList $App -ScriptBlock {
 }
 
 #Log to origianl build file
-"Share to Uni convert" |Out-File C:\Build\Build.txt -Append
+"Shared to Unique convert" |Out-File C:\Build\Build.txt -Append
 ("Configured by " + $Credentials.UserName + " on: " + (Get-Date).ToString()) | Out-File C:\Build\Build.txt -Append
 
 Start-Sleep -s 10
