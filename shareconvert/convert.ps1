@@ -1,14 +1,16 @@
 #Who is doing this?
 $Credentials = Get-Credential
 
-#Set Pre requirments
+#Install Pre requirments, Admin tools
 Add-WindowsCapability -Online -Name "Rsat.ServerManager.Tools~~~~0.0.1.0"
 Add-WindowsCapability -Online -Name "Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
 
 #Set vars
-$shareduser=$env:COMPUTERNAME
-$regprofile="HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
+$shareduser = $env:COMPUTERNAME
+$regprofile = "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList"
 $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+$ImprivataShared = "{562B7F33-EA0E-4C2E-A270-23CAA72C1480}"
+$Uniflow = "{747840DC-0E27-476E-8279-34A8CC5DF3C0}"
 
 # Retrieve DN of local computer.
 $SysInfo = New-Object -ComObject "ADSystemInfo"
@@ -30,8 +32,14 @@ Remove-ADGroupMember -Identity "App-Imprivata Shared (Logout)" -Members $Compute
 #Delete local shared user account
 Remove-Item -LiteralPath "C:\Users\$shareduser" -Force -Recurse
 
+#Remove Uniflow if possible
+Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($Uniflow) /quiet /noreboot" -Wait
+
+#Remove Imprivada shared
+Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($ImprivataShared) /quiet /noreboot" -Wait
+
 #Reinstall imprivada as unique
-#msiexec.exe /i “ImprivataAgent_x64.msi" IPTXPRIMSERVER="HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter" AGENTTYPE=1 /qn /norestart
+Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/i ImprivataAgent_x64.msi IPTXPRIMSERVER=HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter AGENTTYPE=1 /qn /norestart" -Wait
 
 #Add new AD memberships
 $App = @(
