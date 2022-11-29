@@ -12,13 +12,13 @@ $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 $ImprivataShared = "{562B7F33-EA0E-4C2E-A270-23CAA72C1480}"
 $ImprivataSharedupdated = "{FF1756D4-D776-4F8D-86E1-638C4B42F44A}"
 $Uniflow = "{747840DC-0E27-476E-8279-34A8CC5DF3C0}"
-$PathImprivada = "C:\sharedconvert\ImprivataAgent_x64.msi"
+$PathImprivata = "C:\sharedconvert\ImprivataAgent_x64.msi"
 
 # Retrieve DN of local computer.
 $SysInfo = New-Object -ComObject "ADSystemInfo"
 $ComputerDN = $SysInfo.GetType().InvokeMember("ComputerName", "GetProperty", $Null, $SysInfo, $Null)
 
-#Delete shared keys for autologin. Some of these are legacy and will guive error.
+#Delete shared keys for autologin. Some of these are legacy and will give an error.
 Remove-ItemProperty -Path $RegPath -Name "AutoAdminLogon"
 Remove-ItemProperty -Path $RegPath -Name "DefaultUsername"
 Remove-ItemProperty -Path $RegPath -Name "DefaultPassword"
@@ -37,14 +37,14 @@ Get-CimInstance -Class Win32_UserProfile | Where-Object { $_.LocalPath.split('\'
 #Remove Uniflow if possible
 Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($Uniflow) /quiet /noreboot" -Wait
 
-#Remove Imprivada shared
+#Remove Imprivata shared
 Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($ImprivataShared) /quiet REBOOT=ReallySuppress /noreboot" -Wait
 Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($ImprivataSharedupdated) /quiet REBOOT=ReallySuppress /noreboot" -Wait
 
 Start-Sleep -s 10
 
-#Reinstall imprivada as unique
-Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/i $($PathImprivada) IPTXPRIMSERVER=HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter AGENTTYPE=1 /qn /norestart" -Wait
+#Reinstall Imprivata as unique
+Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/i $($PathImprivata) IPTXPRIMSERVER=HTTPS://TFHD-IMPRIV01.TFHD.AD/sso/servlet/messagerouter AGENTTYPE=1 /qn /norestart" -Wait
 
 #Add new AD memberships
 $App = @(
