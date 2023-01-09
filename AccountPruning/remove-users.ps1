@@ -1,16 +1,31 @@
 # Get the username of the logged-in user
 $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty UserName
 
-# Get a list of all local user accounts
-$users = Get-LocalUser
+#Get User List
+Get-ChildItem ’HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList’ |
+    ForEach-Object
+    {
 
-# Filter the list to exclude the current user and the built-in accounts
-$users = $users | Where-Object {$_.Name -ne $currentUser -and $_.Name -ne 'Administrator'|'Ctx_StreamingSvc'|'NetworkService'|'Localservice'|'systemprofile'}
+        #Location on C: Drive
+        $profilepath=$_.GetValue('ProfileImagePath')
 
-# Delete each user account
-foreach ($user in $users) {
-    Remove-LocalUser -Name $user.Name
-    Write-Host "Deleteing Account:$user" -ForegroundColor green
-}
+        #Delete accounts if not system related or logged in
+        if($profilepath -notmatch 'administrator|Ctx_StreamingSvc|NetworkService|Localservice|systemprofile')
+        {
 
+            #Remove User path
+            Write-Host "Removing item: $profilepath" -ForegroundColor green
+            Remove-Item -Path "$profilepath"
+
+            #Remove Reg Value
+            Write-Host $_.PSPath
+            #Remove-Item $_.PSPath -Whatif
+
+        }
+        else
+        {
+            Write-Host "Skipping item:$profilepath" -Fore blue -Back white
+        }
+    }
+    
 Start-Sleep -s 10
