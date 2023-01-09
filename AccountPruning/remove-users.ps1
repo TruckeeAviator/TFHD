@@ -4,10 +4,13 @@ $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -Expand
 # Get a list of all local user accounts
 $users = Get-LocalUser
 
-# Filter the list to exclude the current user and the administrator account
-$users = $users | Where-Object {$_.Name -ne $currentUser -and $_.Name -ne 'Administrator'}
+# Filter the list to exclude the current user and the built-in accounts
+$users = $users | Where-Object {$_.Name -ne $currentUser -and $_.Name -ne 'Administrator'|'Ctx_StreamingSvc'|'NetworkService'|'Localservice'|'systemprofile'}
 
 # Delete each user account
 foreach ($user in $users) {
     Remove-LocalUser -Name $user.Name
+    Write-Host "Deleteing Account:$user" -ForegroundColor green
 }
+
+Start-Sleep -s 10
