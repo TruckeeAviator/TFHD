@@ -4,29 +4,29 @@ $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -Expand
 $currentUser = $currentUser -replace "TFHD_DOMAIN\\", ""
 
 #Get User List
-Get-ChildItem ’HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList’ |
+Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
     ForEach-Object{
 
-        #Location on C: Drive
-        $profilepath=$_.GetValue('ProfileImagePath')
+        #Get path from reg to convert into username string
+        $profileName=$_.GetValue('ProfileImagePath')
 
-        #Delete accounts if not system related or logged in
-        if( ($profilepath -notmatch 'administrator|Ctx_StreamingSvc|NetworkService|Localservice|systemprofile') -and ($profilepath -notmatch "$currentUser") )
+
+        if( ($profileName -notmatch 'administrator|Ctx_StreamingSvc|NetworkService|Localservice|systemprofile') -and ($profileName -notmatch "$currentUser") )
         {
 
-            #Remove User path
-            Write-Host "Removing item: $profilepath" -ForegroundColor green
-            Remove-Item -Path "$profilepath"
+            #Clean up string for removal command
+            $profileName= $profileName -replace "C:\\Users\\", ""
+            write-host "Removing profile: $profileName"
 
-            #Remove Reg Value
-            Write-Host $_.PSPath
-            Remove-Item $_.PSPath -Whatif
-
+            #Remove Account from computer
+            #Get-CimInstance -Class Win32_UserProfile | Where-Object { $_.LocalPath.split('\')[-1] -eq $profileName } | Remove-CimInstance
+            Write-Host "Removed!"
         }
         else
         {
-            Write-Host "Skipping item:$profilepath" -Fore blue -Back white
+            Write-Host "Skipping item:$profileName" -Fore blue -Back white
         }
+        
     }
 
 Start-Sleep -s 10
