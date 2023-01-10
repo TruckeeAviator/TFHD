@@ -16,11 +16,11 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
 
             #Clean up string for removal command
             $profileName= $profileName -replace "C:\\Users\\", ""
-            write-host "Removing profile: $profileName"
+            write-host "Removing profile: $profileName" -Fore green
 
             #Remove Account from computer
-            #Get-CimInstance -Class Win32_UserProfile | Where-Object { $_.LocalPath.split('\')[-1] -eq $profileName } | Remove-CimInstance
-            Write-Host "Removed!"
+            Get-CimInstance -Class Win32_UserProfile | Where-Object { $_.LocalPath.split('\')[-1] -eq $profileName } | Remove-CimInstance
+            Write-Host "Removed!" -Fore red
         }
         else
         {
