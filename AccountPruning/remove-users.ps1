@@ -24,7 +24,7 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
         }
         else
         {
-            Write-Host "Skipping item:$profileName" -Fore blue -Back white
+            Write-Host "Skipping: $profileName" -Fore blue -Back white
         }
         
     }
