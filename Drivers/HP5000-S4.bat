@@ -1,7 +1,12 @@
 Echo off
 cls
-rem v0.1, Kory Albert, This is modified to run as Domain Admin instead of Local!
+rem v0.2, Kory Albert, This is modified to run as Domain Admin instead of Local!
 echo Installing HP Software, Accept EULA, Click finish when done.
+echo.
+echo.
+echo ****Press any key AFTER webpage displays!!*****
+echo.
+echo.
 cd\"HP Mercy Scan Files\Drivers\HP Full Scanner Drivers CD"
 setup.exe
 timeout /t 600
