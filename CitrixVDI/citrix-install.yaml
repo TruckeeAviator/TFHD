@@ -30,6 +30,12 @@
 
   - name: Enable GUI
     shell: 'echo "exec /usr/bin/xfce4-session" >>  ~/.xinitrc && systemctl set-default graphical'
+    
+  - name: Edit xfce display configs
+    shell:
+     - 'sed -i s/#WaylandEnable=false/WaylandEnable=false/g /etc/gdm/custom.conf'
+     - 'echo "AutomaticLoginEnable = true" >> /etc/gdm/custom.conf'
+     - 'echo "AutomaticLogin = root" >> /etc/gdm/custom.conf'
 
   - name: Install depends
     dnf:
