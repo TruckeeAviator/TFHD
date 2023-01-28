@@ -1,6 +1,6 @@
 - name: Install Citrix and configure
-  hosts: clients
-  
+  hosts: all
+
   tasks:
   - name: Ensure system is up to date
     dnf:
@@ -13,21 +13,41 @@
   - name: Remove packates not needed anymore
     dnf:
       autoremove: yes
-      
+
+  - name: Add repos
+    dnf:
+      name: 'epel-release'
+      state: latest
+
+  - name: Enable repo
+    warn: false
+    shell: 'dnf --enablerepo=epel group'
+
   - name: Install desktop environment
     dnf:
-      name: '@xfce-desktop-environment'
-      state: latest
-      
+      name:
+        - '@xfce'
+
+  - name: Enable GUI
+    shell: 'echo "exec /usr/bin/xfce4-session" >>  ~/.xinitrc && systemctl set-default graphical'
+
   - name: Install depends
     dnf:
-      name: 'compat-openssl11'
+      name:
+        - 'compat-openssl11'
+        - 'libXpm'
+        - 'speexdsp'
       state: latest
 
   - name: Download Citrix
     copy:
       src: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
       dest: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
-      
+
   - name: Install Citrix
-    shell: dnf install /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
+    dnf:
+      disable_gpg_check: True
+      name: '/root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm'
+
+  - name: Reboot
+    reboot:
