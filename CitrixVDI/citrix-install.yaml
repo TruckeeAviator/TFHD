@@ -14,7 +14,20 @@
     dnf:
       autoremove: yes
       
+  - name: Install desktop environment
+    dnf:
+      name: '@xfce-desktop-environment'
+      state: latest
+      
   - name: Install depends
     dnf:
-      name: compat-openssl11
+      name: 'compat-openssl11'
       state: latest
+
+  - name: Download Citrix
+    copy:
+      src: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
+      dest: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
+      
+  - name: Install Citrix
+    shell: dnf install /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
