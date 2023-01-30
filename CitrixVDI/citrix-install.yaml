@@ -54,6 +54,12 @@
     dnf:
       disable_gpg_check: True
       name: '/root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm'
+      
+   - name: Create autostart directory
+     ansible.builtin.file:
+       path: /home/vdi/.config/autostart
+       state: directory
+       mode: '0755'
 
   - name: Reboot
     reboot:
