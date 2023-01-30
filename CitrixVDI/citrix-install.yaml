@@ -35,7 +35,7 @@
     shell:
      - 'sed -i s/#WaylandEnable=false/WaylandEnable=false/g /etc/gdm/custom.conf'
      - 'echo "AutomaticLoginEnable = true" >> /etc/gdm/custom.conf'
-     - 'echo "AutomaticLogin = root" >> /etc/gdm/custom.conf'
+     - 'echo "AutomaticLogin = vdi" >> /etc/gdm/custom.conf'
 
   - name: Install depends
     dnf:
@@ -55,11 +55,20 @@
       disable_gpg_check: True
       name: '/root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm'
       
-   - name: Create autostart directory
-     ansible.builtin.file:
+  - name: Create autostart directory, copy link
+    ansible.builtin.file:
        path: /home/vdi/.config/autostart
        state: directory
        mode: '0755'
+    copy:
+       src: /usr/share/applications/selfservice.desktop
+       dest: /home/vdi/autostart/selfservice.desktop
+  
+  - name: Configure citrix for VDI
+    ansible.builtin.file:
+    path: /home/vdi/.ICAClient/.eula_accepted
+    state: touch
+    mode: u=rw,g=r,o=r
 
   - name: Reboot
     reboot:
