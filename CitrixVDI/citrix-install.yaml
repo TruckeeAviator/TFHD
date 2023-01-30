@@ -44,6 +44,9 @@
         - 'libXpm'
         - 'speexdsp'
       state: latest
+    shell: 
+      - 'echo "export LD_PRELOAD=/lib64/libcrypto.so.1.1" >> /home/vdi/.bashrc'
+      - 'sed -i s/StoreURL=/StoreURL=URL/g /opt/Citrix/ICAClient/config/All_Regions.ini'
 
   - name: Download Citrix
     copy:
