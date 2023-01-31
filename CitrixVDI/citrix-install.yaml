@@ -48,12 +48,10 @@
       - 'echo "export LD_PRELOAD=/lib64/libcrypto.so.1.1" >> /home/vdi/.bashrc'
       - 'sed -i s/StoreURL=/StoreURL=URL/g /opt/Citrix/ICAClient/config/All_Regions.ini'
 
-  - name: Download Citrix
+  - name: Download/Install Citrix
     copy:
       src: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
       dest: /root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm
-
-  - name: Install Citrix
     dnf:
       disable_gpg_check: True
       name: '/root/ICAClient-rhel-22.12.0.12-0.x86_64.rpm'
