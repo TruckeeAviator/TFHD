@@ -7,6 +7,7 @@ Start-Sleep -s 10
 $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty UserName
 #Clean up text
 $currentUser = $currentUser -replace "TFHD_DOMAIN\\", ""
+$numAccounts = 0
 
 #Get User List
 Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
@@ -26,6 +27,7 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
             #Remove Account from computer
             Get-CimInstance -Class Win32_UserProfile | Where-Object { $_.LocalPath.split('\')[-1] -eq $profileName } 2>$null | Remove-CimInstance
             Write-Host "Removed!" -Fore red
+            $numAccounts++
         }
         else
         {
@@ -35,5 +37,6 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
     }
 
 Write-Host "*** Done! ***"
+Write-Host "Removed $numAccounts from the system." -Fore blue -Back white
 
 Start-Sleep -s 5
