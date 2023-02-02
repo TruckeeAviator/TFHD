@@ -1,3 +1,8 @@
+Write-Host "*** This will remove all users accounts besides yours and built-in accounts ***"
+Write-Host "*** Please logout all other users before running this script! ***"
+Write-Host "*** This will take time depending on the number of accounts, please let the script finish ***"
+Start-Sleep -s 10
+
 #Get the username of the logged-in user
 $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty UserName
 #Clean up text
@@ -24,7 +29,7 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
         }
         else
         {
-            Write-Host "Skipping: $profileName" -Fore blue -Back white
+            Write-Host "Skipping item:$profileName" -Fore blue -Back white
         }
         
     }
