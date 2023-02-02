@@ -37,6 +37,6 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
     }
 
 Write-Host "*** Done! ***"
-Write-Host "Removed $numAccounts from the system." -Fore blue -Back white
+Write-Host "Removed $numAccounts accounts from the system." -Fore blue -Back white
 
 Start-Sleep -s 5
