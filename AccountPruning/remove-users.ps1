@@ -16,8 +16,8 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
         #Get path from reg to convert into username string
         $profileName=$_.GetValue('ProfileImagePath')
 
-
-        if( ($profileName -notmatch 'administrator|Ctx_StreamingSvc|NetworkService|Localservice|systemprofile') -and ($profileName -notmatch "$currentUser") )
+        #Current user checking doesnt work via RDP. Current users dont seem to be affected as the system brings an error. Removing if/and check
+        if( ($profileName -notmatch 'administrator|Ctx_StreamingSvc|NetworkService|Localservice|systemprofile') )
         {
 
             #Clean up string for removal command
