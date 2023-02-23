@@ -1,6 +1,9 @@
 Write-Host "*** This will remove all users accounts besides yours and built-in accounts ***"
 Write-Host "*** Please logout all other users before running this script! ***"
 Write-Host "*** This will take time depending on the number of accounts, please let the script finish ***"
+
+#Log when the cleaner was run
+"Account Pruning was preformed $(Get-Date)" | out-file C:\cleaner-log.txt -Append
 Start-Sleep -s 10
 
 #Get the username of the logged-in user
