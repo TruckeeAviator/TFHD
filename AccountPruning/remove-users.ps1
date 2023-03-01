@@ -2,15 +2,16 @@ Write-Host "*** This will remove all users accounts besides yours and built-in a
 Write-Host "*** Please logout all other users before running this script! ***"
 Write-Host "*** This will take time depending on the number of accounts, please let the script finish ***"
 
-#Log when the cleaner was run
-"Account Pruning was preformed $(Get-Date)" | out-file C:\cleaner-log.txt -Append
 Start-Sleep -s 10
 
 #Get the username of the logged-in user
 $currentUser = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty UserName
 #Clean up text
 $currentUser = $currentUser -replace "TFHD_DOMAIN\\", ""
+
+#Set Vars
 $numAccounts = 0
+[double]$freeStart = '{0:F2}' -f ((Get-PSDrive C).Free / 1GB)
 
 #Get User List
 Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
@@ -39,7 +40,19 @@ Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList" |
         
     }
 
-Write-Host "*** Done! ***"
-Write-Host "Removed $numAccounts accounts from the system." -Fore blue -Back white
+#Get space saved
+[double]$freeEnd = '{0:F2}' -f ((Get-PSDrive C).Free / 1GB)
+$spaceSaved = $freeEnd - $freeStart
 
-Start-Sleep -s 5
+#Log when the cleaner was run
+"Account Pruning was preformed $(Get-Date)" | out-file C:\cleaner-log.txt -Append
+("Accounts Removed: " + $numAccounts) | out-file C:\cleaner-log.txt -Append
+("Free space before operation: " + $freeStart + " GiB") | out-file C:\cleaner-log.txt -Append
+("Free space after operation: " + $freeEnd) + " GiB"| out-file C:\cleaner-log.txt -Append
+("Space Saved: " + $spaceSaved) + " GiB"| out-file C:\cleaner-log.txt -Append
+" " | out-file C:\cleaner-log.txt -Append
+
+Write-Host "*** Done! ***"
+Write-Host "Removed $numAccounts accounts from the system. Saved $spaceSaved GiB" -Fore blue -Back white
+
+Start-Sleep -s 15
