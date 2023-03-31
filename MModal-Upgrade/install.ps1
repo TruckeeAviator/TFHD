@@ -1,3 +1,9 @@
+#Delete Directory
+function Delete-Path()
+    {
+        Remove-Item -LiteralPath "C:\MModalUpgrade" -Force -Recurse
+    }
+    
 #Check if MModal is installed on system
 function Install-Check()
     {
@@ -13,13 +19,13 @@ function Install-Check()
         }
     }
 
-#If MModal is on the system begin the install, Exit if not
+#If MModal is on the system begin the install, Exit if not and clean up
 if ((Install-Check) -eq $false)
     {
-        #exit
+        Delete-Path
+        exit
     }
 
-New-Item -Path "c:\" -Name "MMODALtest" -ItemType "directory"
 #Start the installer batch script
 Start-Process "\\tfhd_app\IT\Dist\MModal\Prod\Fluency.Direct.10.0.690.1877\fd.client\install_silent.bat"
 Start-Sleep -s 30
@@ -32,4 +38,6 @@ if ((Install-Check) -eq $false)
 
 Copy-Item "\\tfhd_app\IT\Dist\MModal\Prod\MModal Fluency Direct.lnk" -Destination "C:\Users\Public\Public Desktop"
 
+#Cleanup
+Delete-Path
 return "0"
