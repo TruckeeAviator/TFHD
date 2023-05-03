@@ -1,9 +1,3 @@
-#Delete Directory
-function Delete-Path()
-    {
-        Remove-Item -Path C:\MModalUpgrade -Force -Recurse
-    }
-
 #Check if MModal is installed on system
 function Install-Check()
     {
@@ -11,11 +5,30 @@ function Install-Check()
         $checkPath = Test-Path $mmodalInstallPath
         if ($checkPath -eq $true)
         {
+            "MModal is installed on this PC, the upgrade will start" | Out-File C:\Windows\Logs\mmodalupgrade.txt -Append
             return $true
         }
         else {
+            "MModal is NOT installed on this PC, exiting installer now" | Out-File C:\Windows\Logs\mmodalupgrade.txt -Append
             return $false
         }
+    }
+
+#Check if MModal upgraded
+function Upgrade-Check()
+    {
+        $regPathUninstall = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        $checkMmodalV12 = Get-ItemProperty $regPathUninstall | Select-Object DisplayVersion
+
+        foreach ($app in $checkMmodalV12) 
+        {
+            if ($app.DisplayVersion -eq "12.1.11.15") 
+			{
+				"MModal upgraded to V12!" | Out-File C:\Windows\Logs\mmodalupgrade.txt -Append
+                Exit
+			}
+        }
+        "MModal upgraded seems to have failed!" | Out-File C:\Windows\Logs\mmodalupgrade.txt -Append
     }
 
 function Uninstall-Apps($apps)
@@ -23,10 +36,13 @@ function Uninstall-Apps($apps)
         Start-Process "C:\Windows\System32\msiexec.exe" -ArgumentList "/x $($apps) /quiet /noreboot" -Wait
     }
 
+
+#Create Log
+("MModal upgrade V10 to V12: Install date: " + (Get-Date).ToString()) | Out-File C:\Windows\Logs\mmodalupgrade.txt -Append
+
 #If MModal is on the system begin the install, Exit if not and clean up
 if ((Install-Check) -eq $false)
     {
-        Delete-Path
         exit
     }
 
@@ -65,26 +81,11 @@ Uninstall-Apps("{E32A9DF4-79B1-4311-AF00-36E93C2127E6}")
 Uninstall-Apps("{E85951A0-D3B5-4C03-B384-8D7CBD522931}")
 Uninstall-Apps("{FC806A94-5FAB-422B-AB6D-97B32E0B2B8A}")
 
-#Start the installer batch script
-Start-Process "\\tfhd_app\IT\Dist\MModal\Prod\Fluency.Direct.10.0.690.1877\fd.client\install_silent.bat"
-Start-Sleep -s 100
+#Install the new Version
+#msiexec.exe /i "\\FILESHARE\Apps\MModal\Fluency Direct\Fluency.Direct.12.1.11.15\Fluency.Direct.12.1.11.15\fd.client\configuration\FluencyDirect-12.1.11.15.msi" CONFIGFILE="\\FILESHARE\Apps\MModal\Fluency Direct\Fluency.Direct.12.1.11.15\Fluency.Direct.12.1.11.15\localSettings.config" SETUPTYPE=Typical ALLUSERS=2REBOOT=REALLYSUPPRESS /qn
+Start-Process -FilePath "$env:systemroot\system32\msiexec.exe" -ArgumentList '/i "\\FILESHARE\Apps\MModal\Fluency Direct\Fluency.Direct.12.1.11.15\Fluency.Direct.12.1.11.15\fd.client\configuration\FluencyDirect-12.1.11.15.msi" CONFIGFILE="\\FILESHARE\Apps\MModal\Fluency Direct\Fluency.Direct.12.1.11.15\Fluency.Direct.12.1.11.15\localSettings.config" SETUPTYPE=Typical ALLUSERS=2REBOOT=REALLYSUPPRESS /qn' -Wait
 
-#Wait for MModal to install
-if ((Install-Check) -eq $false)
-    {
-        Start-Sleep -s 15
-    }
+#Copy link with --ssogui
+Copy-Item "\\FILESHARE\Apps\MModal\Fluency Direct\Fluency.Direct.12.1.11.15\Fluency.Direct.12.1.11.15\MModal Fluency Direct.lnk" -Destination "C:\Users\Public\Desktop\MModal Fluency Direct.lnk"
 
-Copy-Item "\\tfhd_app\IT\Dist\MModal\Prod\MModal Fluency Direct.lnk" -Destination "C:\Users\Public\Desktop\MModal Fluency Direct.lnk"
-
-#Clean up
-Delete-Path
-
-#Error Checking
-if ((Install-Check) -eq $true)
-    {
-        return "0"
-    }
-    else {
-        return "1"
-    }
+Upgrade-Check
