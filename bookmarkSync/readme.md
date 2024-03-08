@@ -4,5 +4,6 @@ This agent runs in the background and looks for changes to the Bookmarks JSON fi
 
 
 This is ment to run in the background it can be converted to binary with pyinstaller
+
 `pip install pyinstaller`
 `pyinstaller -F bookmarkSync.pyw`
